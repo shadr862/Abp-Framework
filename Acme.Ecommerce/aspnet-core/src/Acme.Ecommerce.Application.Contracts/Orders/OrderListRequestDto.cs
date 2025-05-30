@@ -10,7 +10,7 @@ namespace Acme.Ecommerce.Orders
     public class OrderListRequestDto:PagedAndSortedResultRequestDto
     {
         public OrderListRequestDto() {
-            MaxResultCount = 10; 
+            MaxResultCount = 1000; 
         }
     }
 }

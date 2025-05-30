@@ -10,6 +10,8 @@ namespace Acme.Ecommerce.Orders
     {
         public string Name { get; set; }
         public string PhoneNumber { get; set; }
+        public string Status { get; set; }
+        public string DeliveryMethod { get; set; }
         public Guid UserId { get; set; }
         public CreateUpdateAddressDto Address { get; set; }
 

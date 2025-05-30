@@ -15,6 +15,9 @@ namespace Acme.Ecommerce.Orders
         public string Name { get; set; }
         public string PhoneNumber { get; set; }
 
+        public string status { get; set; }
+        public string deliveryMethod {  get; set; }
+
         public Guid AddressId { get; set; } // Foreign key for Address one to one relationship
         public virtual Address Address { get; set; } // Fully qualify the Address type  
 

@@ -12,6 +12,7 @@ namespace Acme.Ecommerce.OrderedProducts
         public string Title { get; set; }
         public string Category { get; set; }
         public double Price { get; set; }
+        public int Quantity { get; set; }
         public string Thumbnail { get; set; }
         public Guid ProductId { get; set; }
 

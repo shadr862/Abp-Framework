@@ -8,6 +8,8 @@ using Acme.Ecommerce.Addresses;
 using Acme.Ecommerce.OrderedProducts;
 using Volo.Abp.Application.Dtos;
 using Microsoft.EntityFrameworkCore;
+using Volo.Abp;
+using Acme.Ecommerce.Products;
 
 
 
@@ -63,49 +65,22 @@ namespace Acme.Ecommerce.Orders
 
         public override async Task<OrderDto> UpdateAsync(Guid id, CreateUpdateOrderDto input)
         {
-            // Retrieve the existing order
+            // Retrieve existing order
             var order = await Repository.GetAsync(id);
 
-            // Retrieve the associated address
-            var address = await _addressRepository.GetAsync(order.AddressId);
+            // Update only the status property
+            order.status= input.Status;
 
-            // Map updated values
-            ObjectMapper.Map(input, order);
-            ObjectMapper.Map(input.Address, address);
-
-            // Update the address and order
-            await _addressRepository.UpdateAsync(address);
+            // Save changes to order only
             await Repository.UpdateAsync(order);
 
-            // Retrieve existing ordered products without tracking
-            var productsToDelete = await (await _orderedProductRepository.GetQueryableAsync())
-                .Where(p => p.OrderId == order.Id)
-                .AsNoTracking()
-                .ToListAsync();
-
-            // Delete existing ordered products
-            foreach (var product in productsToDelete)
-            {
-                await _orderedProductRepository.DeleteAsync(product);
-            }
-
-            // Insert new ordered products
-            foreach (var productDto in input.OrderedProducts)
-            {
-                var newProduct = ObjectMapper.Map<CreateUpdateOrderedProductDto, OrderedProduct>(productDto);
-                newProduct.OrderId = order.Id;
-                await _orderedProductRepository.InsertAsync(newProduct);
-            }
-
-            // Retrieve the updated order
+            // Reload updated order with related data
             var updatedOrder = await Repository.GetAsync(id);
 
-            // Map to DTO
+            // Map to DTO including related ordered products and address
             var result = ObjectMapper.Map<Order, OrderDto>(updatedOrder);
 
-            // Retrieve and map ordered products
-            var queryable = await _orderedProductRepository.GetQueryableAsync();
-            var orderedProducts = await queryable
+            var orderedProducts = await (await _orderedProductRepository.GetQueryableAsync())
                 .Where(p => p.OrderId == order.Id)
                 .ToListAsync();
 
@@ -113,6 +88,8 @@ namespace Acme.Ecommerce.Orders
 
             return result;
         }
+
+
 
 
 
@@ -152,6 +129,37 @@ namespace Acme.Ecommerce.Orders
             }
 
             return result;
+        }
+
+        public async Task<PagedResultDto<OrderDto>> GetListByUserIdAsync(OrderListRequestDto input, Guid userId)
+        {
+            // Filter, paginate, and sort manually
+            var query = await Repository.GetQueryableAsync();
+            var filteredQuery = query.Where(o => o.UserId == userId);
+
+            var totalCount = await AsyncExecuter.CountAsync(filteredQuery);
+
+            var orderList = await AsyncExecuter.ToListAsync(filteredQuery.Take(input.MaxResultCount)
+);
+
+            // Map to DTO
+            var orderDtos = ObjectMapper.Map<List<Order>, List<OrderDto>>(orderList);
+
+            // Load related data for each order
+            foreach (var orderDto in orderDtos)
+            {
+                var products = await _orderedProductRepository.GetListAsync(p => p.OrderId == orderDto.Id);
+                orderDto.OrderedProducts = ObjectMapper.Map<List<OrderedProduct>, List<OrderedProductDto>>(products);
+
+                var orderEntity = await Repository.GetAsync(orderDto.Id);
+                var address = await _addressRepository.GetAsync(orderEntity.AddressId);
+                orderDto.Address = ObjectMapper.Map<Address, AddressDto>(address);
+            }
+
+            return new PagedResultDto<OrderDto>(
+                totalCount,
+                orderDtos
+            );
         }
 
 
