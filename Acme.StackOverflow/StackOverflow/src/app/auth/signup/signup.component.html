@@ -1,0 +1,83 @@
+<div class="parent">
+  <div class="wrapper">
+    <form>
+      <h1>Sign Up</h1>
+
+      <!-- First Name -->
+      <div class="input-box">
+        <input
+          type="text"
+          name="FirstName"
+          [(ngModel)]="signUpObj.FirstName"
+          placeholder="First Name"
+          required
+        />
+        <i class="bx bxs-user"></i>
+      </div>
+
+      <!-- Last Name -->
+      <div class="input-box">
+        <input
+          type="text"
+          name="LastName"
+          [(ngModel)]="signUpObj.LastName"
+          placeholder="Last Name"
+          required
+        />
+        <i class="bx bxs-user"></i>
+      </div>
+
+      <!-- Email -->
+      <div class="input-box">
+        <input
+          type="email"
+          name="EmailId"
+          [(ngModel)]="signUpObj.EmailId"
+          placeholder="Email"
+          required
+        />
+        <i class="bx bxs-envelope"></i>
+      </div>
+
+      <!-- Password -->
+      <div class="input-box">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          name="Password"
+          [(ngModel)]="signUpObj.Password"
+          placeholder="Password"
+          required
+        />
+        <i
+          class="bx"
+          [ngClass]="showPassword ? 'bx-show' : 'bx-hide'"
+          (click)="togglePasswordVisibility()"
+        ></i>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="input-box">
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          name="ConfirmPassword"
+          [(ngModel)]="signUpObj.ConfirmPassword"
+          placeholder="Confirm Password"
+          required
+        />
+        <i
+          class="bx"
+          [ngClass]="showConfirmPassword ? 'bx-show' : 'bx-hide'"
+          (click)="toggleConfirmPasswordVisibility()"
+        ></i>
+      </div>
+
+      <!-- Sign Up Button -->
+      <button type="button" class="btn" (click)="signUp()">Sign Up</button>
+
+      <!-- Link to Login -->
+      <div class="links-container" style="text-align:center; margin-top: 15px;">
+        <a href="/login">Already have an account? Login</a>
+      </div>
+    </form>
+  </div>
+</div>
