@@ -18,6 +18,8 @@ namespace Acme.StackOverflow.Posts
         public Guid AppUserId { get; set; }
         public AppUser AppUser { get; set; }
 
+        public string Name { get; set; }
+
         public PostType PostType { get; set; }
 
         // Self-referencing parent (e.g., question is the parent of answer)
@@ -32,7 +34,7 @@ namespace Acme.StackOverflow.Posts
 
         public string? Title { get; set; }
         public string Body { get; set; }
-        public int Score { get; set; }
+        public DateTime Created {  get; set; }
 
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Vote> Votes { get; set; }

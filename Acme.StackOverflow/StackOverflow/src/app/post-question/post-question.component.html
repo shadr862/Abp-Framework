@@ -1,0 +1,56 @@
+<form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+  <div class="mb-3">
+    <label>User ID</label>
+    <input class="form-control" formControlName="appUserId" />
+  </div>
+
+  <div class="mb-3">
+    <label>Post Type</label>
+    <select class="form-select" formControlName="postType">
+      <option [value]="postTypes.Question">Question</option>
+      <option [value]="postTypes.Answer">Answer</option>
+    </select>
+  </div>
+  
+  <!-- <div class="mb-3">
+    <label>Parent ID (for answers)</label>
+    <input class="form-control" formControlName="parentId" />
+  </div>
+
+  <div class="mb-3">
+    <label>Accepted Answer ID</label>
+    <input class="form-control" formControlName="acceptedAnswerId" />
+  </div> -->
+
+  <div class="mb-3">
+    <label>Title (for questions)</label>
+    <input class="form-control" formControlName="title" />
+  </div>
+
+  <div class="mb-3">
+    <label>Body</label>
+    <textarea class="form-control" formControlName="body"></textarea>
+  </div>
+
+ <div class="mb-3">
+  <label>Tags</label>
+  <div *ngFor="let tag of tags" class="form-check">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      [id]="tag.id"
+      [checked]="tag.selected"
+      (change)="onTagChange(tag)"
+    />
+    <label class="form-check-label" [for]="tag.id">
+      {{ tag.tagName }}
+    </label>
+  </div>
+</div>
+
+
+
+
+  <button class="btn btn-primary" type="submit">Submit</button>
+</form>
+

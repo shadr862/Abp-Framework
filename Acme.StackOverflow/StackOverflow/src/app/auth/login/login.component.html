@@ -2,7 +2,9 @@
   <div class="wrapper">
     <form>
       <h1>Login</h1>
-
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
       <!-- Username -->
       <div class="input-box">
         <input type="text" name="EmailId" [(ngModel)]="loginObj.EmailId" placeholder="Username" required />

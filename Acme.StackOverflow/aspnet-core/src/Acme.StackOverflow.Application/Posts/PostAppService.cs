@@ -35,7 +35,7 @@ namespace Acme.StackOverflow.Posts
         public override async Task<PostDto> CreateAsync(CreateUpdatePostDto input)
         {
             var post = ObjectMapper.Map<CreateUpdatePostDto, Post>(input);
-            post.Score = 0;
+        
 
             await Repository.InsertAsync(post, autoSave: true);
 
@@ -170,6 +170,26 @@ namespace Acme.StackOverflow.Posts
 
             return answerDtos;
         }
+
+        public async Task<List<PostDto>> GetAllQuestionsAsync()
+        {
+            var queryable = await Repository.GetQueryableAsync();
+
+            var questions = await queryable
+                .Where(p => p.PostType == PostType.Question) // Assuming enum PostType.Question == 0
+                .ToListAsync();
+
+            var questionDtos = new List<PostDto>();
+
+            foreach (var post in questions)
+            {
+                var dto = await MapPostWithTagsToDtoAsync(post);
+                questionDtos.Add(dto);
+            }
+
+            return questionDtos;
+        }
+
 
 
     }

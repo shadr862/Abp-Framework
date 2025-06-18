@@ -1,0 +1,23 @@
+<div class="container mt-4" *ngIf="question">
+  <div class="p-4 border rounded shadow-sm">
+    <h2 class="fw-bold mb-3">{{ question.title }}</h2>
+
+    <p class="mb-4">{{ question.body }}</p>
+
+    <div class="mb-3">
+      <span *ngFor="let tag of question.tags" class="badge bg-secondary me-1">
+        {{ tag.tagName }}
+      </span>
+    </div>
+
+    <div class="text-muted small"> 
+      Asked by {{ question.name || 'Unknown' }} on
+      {{ question.created | date: 'medium' }}
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!question" class="text-center text-muted mt-5">
+  <p>Loading question details...</p>
+</div>
+

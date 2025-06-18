@@ -9,6 +9,17 @@
     font-family: 'Poppins', sans-serif;
 
 }
+
+.success-message {
+  text-align: center;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  font-weight: bold;
+}
 .parent{
     display: flex;
     justify-content: center;

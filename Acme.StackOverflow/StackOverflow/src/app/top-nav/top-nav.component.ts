@@ -1,13 +1,9 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatMenuModule } from '@angular/material/menu';
+import { Component, OnInit } from '@angular/core';
+import {  Router, RouterLink, RouterOutlet } from '@angular/router';
+
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../services/authService/auth.service';
 
 @Component({
   selector: 'app-top-nav',
@@ -21,23 +17,26 @@ import { CommonModule } from '@angular/common';
   templateUrl: './top-nav.component.html',
   styleUrls: ['./top-nav.component.css'],
 })
-export class TopNavComponent {
+export class TopNavComponent implements OnInit{
   searchText = '';
   isLoggedIn = false; // Replace with your auth logic
   userAvatarUrl = 'https://i.pravatar.cc/150?img=3'; // Replace with actual user avatar URL
+  userName='';
 
-  private router = inject(Router);
+ constructor(public AuthService:AuthService,
+   private RouterService:Router){}
 
+ ngOnInit(): void {
+   this.userName = localStorage.getItem('userName') ?? '';
+   this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+ }
   onSearch() {
-    if (this.searchText.trim()) {
-      this.router.navigate(['/search'], { queryParams: { q: this.searchText.trim() } });
-    }
+   
   }
 
   logout() {
-    // Your logout logic here
-    this.isLoggedIn = false;
-    this.router.navigate(['/']);
+    this.AuthService.clear();
+    this.RouterService.navigate(['/login']);
   }
 }
 
