@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Acme.StackOverflow.Comments;
 using Acme.StackOverflow.PostTags;
 using Acme.StackOverflow.Votes;
+using Acme.StackOverflow.Answers;
 using static Volo.Abp.Identity.Settings.IdentitySettingNames;
 using Volo.Abp.Domain.Entities.Auditing;
 using Acme.StackOverflow.AppUsers;
@@ -29,13 +30,12 @@ namespace Acme.StackOverflow.Posts
 
         // Accepted answer navigation
         public Guid? AcceptedAnswerId { get; set; }
-        public Post AcceptedAnswer { get; set; }
-        public ICollection<Post> AcceptedByQuestions { get; set; }
-
+      
         public string? Title { get; set; }
         public string Body { get; set; }
         public DateTime Created {  get; set; }
 
+        public ICollection<Answer> Answers { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Vote> Votes { get; set; }
         public ICollection<PostTag> PostTags { get; set; }

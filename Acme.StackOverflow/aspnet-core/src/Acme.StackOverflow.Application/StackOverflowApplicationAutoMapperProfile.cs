@@ -1,4 +1,5 @@
-﻿using Acme.StackOverflow.AppUsers;
+﻿using Acme.StackOverflow.Answers;
+using Acme.StackOverflow.AppUsers;
 using Acme.StackOverflow.Comments;
 using Acme.StackOverflow.Posts;
 using Acme.StackOverflow.Tags;
@@ -30,5 +31,8 @@ public class StackOverflowApplicationAutoMapperProfile : Profile
 
         CreateMap<Vote,VoteDto>();
         CreateMap<CreateUpdateVoteDto, Vote>();
+
+        CreateMap<Answer, AnswerDto>();
+        CreateMap<CreateUpdateAnswerDto,Answer>();
     }
 }

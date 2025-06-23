@@ -8,7 +8,7 @@
       <div class="input-group search-bar">
         <input
           type="search"
-          [(ngModel)]="searchText"
+          [formControl]="searchfilter"
           name="search"
           class="form-control"
           placeholder="Search questions..."
@@ -23,7 +23,7 @@
     <!-- Right side: Auth/Profile -->
     <div  class="d-flex align-items-center">
       <a
-        *ngIf="AuthService.isLisLoggedIn"
+        *ngIf="isLoggedIn"
         routerLink="/dashboard/create-question"
         class="btn btn-warning me-3 d-none d-md-inline-flex align-items-center"
       >
@@ -51,7 +51,7 @@
             <span class="d-none d-md-inline">{{ userName }}</span>
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="profileMenu">
-            <li><a class="dropdown-item" routerLink="/profile">My Profile</a></li>
+            <li><a class="dropdown-item" routerLink="/dashboard/my-profile">My Profile</a></li>
             <li><hr class="dropdown-divider" /></li>
             <li><button class="dropdown-item" (click)="logout()">Logout</button></li>
           </ul>

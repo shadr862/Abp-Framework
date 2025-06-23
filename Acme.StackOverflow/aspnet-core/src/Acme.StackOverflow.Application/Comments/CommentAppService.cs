@@ -24,13 +24,13 @@ namespace Acme.StackOverflow.Comments
         {
         }
 
-        public async Task<List<CommentDto>> GetCommentsByUserAndPostAsync(Guid AppUserId,Guid PostId)
+        public async Task<List<CommentDto>> GetCommentsByPostIdAsync(Guid PostId)
         {
             // Get IQueryable to apply LINQ
             var queryable = await Repository.GetQueryableAsync();
 
             var query = queryable
-                .Where(c => c.AppUserId == AppUserId && c.PostId == PostId);
+                .Where(c => c.PostId == PostId);
 
             var comments = await query.ToListAsync();
 

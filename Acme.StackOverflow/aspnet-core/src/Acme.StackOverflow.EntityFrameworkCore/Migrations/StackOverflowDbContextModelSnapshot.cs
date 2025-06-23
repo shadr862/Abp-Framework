@@ -24,6 +24,49 @@ namespace Acme.StackOverflow.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Acme.StackOverflow.Answers.Answer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AnswerText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("Answers");
+                });
+
             modelBuilder.Entity("Acme.StackOverflow.AppUsers.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -85,16 +128,20 @@ namespace Acme.StackOverflow.Migrations
                         .HasColumnType("nvarchar(40)")
                         .HasColumnName("ConcurrencyStamp");
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ExtraProperties")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ExtraProperties");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -179,8 +226,6 @@ namespace Acme.StackOverflow.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AcceptedAnswerId");
 
                     b.HasIndex("AppUserId");
 
@@ -2002,6 +2047,25 @@ namespace Acme.StackOverflow.Migrations
                     b.ToTable("AbpTenantConnectionStrings", (string)null);
                 });
 
+            modelBuilder.Entity("Acme.StackOverflow.Answers.Answer", b =>
+                {
+                    b.HasOne("Acme.StackOverflow.AppUsers.AppUser", "AppUser")
+                        .WithMany("Answers")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Acme.StackOverflow.Posts.Post", "Post")
+                        .WithMany("Answers")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("Acme.StackOverflow.Comments.Comment", b =>
                 {
                     b.HasOne("Acme.StackOverflow.AppUsers.AppUser", "AppUser")
@@ -2040,11 +2104,6 @@ namespace Acme.StackOverflow.Migrations
 
             modelBuilder.Entity("Acme.StackOverflow.Posts.Post", b =>
                 {
-                    b.HasOne("Acme.StackOverflow.Posts.Post", "AcceptedAnswer")
-                        .WithMany("AcceptedByQuestions")
-                        .HasForeignKey("AcceptedAnswerId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("Acme.StackOverflow.AppUsers.AppUser", "AppUser")
                         .WithMany("Posts")
                         .HasForeignKey("AppUserId")
@@ -2054,8 +2113,6 @@ namespace Acme.StackOverflow.Migrations
                     b.HasOne("Acme.StackOverflow.Posts.Post", "Parent")
                         .WithMany("ChildPosts")
                         .HasForeignKey("ParentId");
-
-                    b.Navigation("AcceptedAnswer");
 
                     b.Navigation("AppUser");
 
@@ -2225,6 +2282,8 @@ namespace Acme.StackOverflow.Migrations
 
             modelBuilder.Entity("Acme.StackOverflow.AppUsers.AppUser", b =>
                 {
+                    b.Navigation("Answers");
+
                     b.Navigation("Comments");
 
                     b.Navigation("Posts");
@@ -2234,7 +2293,7 @@ namespace Acme.StackOverflow.Migrations
 
             modelBuilder.Entity("Acme.StackOverflow.Posts.Post", b =>
                 {
-                    b.Navigation("AcceptedByQuestions");
+                    b.Navigation("Answers");
 
                     b.Navigation("ChildPosts");
 

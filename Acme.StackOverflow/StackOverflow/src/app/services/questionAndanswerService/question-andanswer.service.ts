@@ -34,16 +34,30 @@ export class QuestionAndanswerService {
   }
   getQuestion()
   {
-    return this.http.get<any>('https://localhost:44341/api/app/post/questions');
+    return this.http.get<any>('https://localhost:44341/api/app/post');
   }
 
   getQuestionById(id:any){
     return this.http.get<any>(`https://localhost:44341/api/app/post/${id}`)
   }
 
+  getQuestionByUserId(id:any){
+    return this.http.get<any>(`https://localhost:44341/api/app/post/posts-by-user-id/${id}`)
+  }
+
   delteQuestion(id:any)
   {
     return this.http.delete(`https://localhost:44341/api/app/post/${id}`)
+  }
+
+
+  postAnswer(answer:any)
+  {
+    return this.http.post<any>("https://localhost:44341/api/app/answer",answer)
+  }
+
+  getAnswerById(id:any){
+    return this.http.get<any>(`https://localhost:44341/api/app/answer/answers-by-post-id/${id}`)
   }
 
 }

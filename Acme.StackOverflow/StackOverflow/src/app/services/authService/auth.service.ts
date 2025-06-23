@@ -8,6 +8,7 @@ export class AuthService {
   isLisLoggedIn: boolean = false;
   userId:string='';
   userName:string='';
+  bio:string='';
 
   constructor(private http:HttpClient) { }
 
@@ -30,9 +31,11 @@ export class AuthService {
     this.isLisLoggedIn=false;
     this.userId='';
     this.userName='';
+    this.bio='';
 
     localStorage.removeItem('isLisLoggedIn');
+    localStorage.removeItem('userId');
     localStorage.removeItem('userName');
-    localStorage.removeItem('userName');
+    localStorage.removeItem('bio');
   }
 }

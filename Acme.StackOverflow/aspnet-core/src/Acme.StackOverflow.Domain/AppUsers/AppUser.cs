@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Acme.StackOverflow.Comments;
 using Acme.StackOverflow.Posts;
+using Acme.StackOverflow.Answers;
 using Acme.StackOverflow.PostTags;
 using Acme.StackOverflow.Votes;
 using Volo.Abp.Domain.Entities;
@@ -21,6 +22,7 @@ namespace Acme.StackOverflow.AppUsers
         public ICollection<Post> Posts { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Vote> Votes { get; set; }
+        public ICollection<Answer> Answers { get; set; }
     }
 
 }

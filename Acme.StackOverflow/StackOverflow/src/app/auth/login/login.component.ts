@@ -37,9 +37,11 @@ export class LoginComponent {
         this.AuthService.isLisLoggedIn = true;
         this.AuthService.userId = response.id;
         this.AuthService.userName = response.displayName;
+        this.AuthService.bio=response.bio;
 
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userName', this.AuthService.userName);
+        localStorage.setItem('bio',this.AuthService.bio);
         localStorage.setItem('userId', this.AuthService.userId.toString());
         this.routerService.navigateByUrl('dashboard')
 

@@ -3,7 +3,7 @@
 
   <div
     class="mb-4 p-3 border rounded shadow-sm position-relative"
-    *ngFor="let question of questions"
+    *ngFor="let question of questions.items"
     style="cursor: pointer; text-decoration: none; color: inherit;"
     [routerLink]="['/dashboard/questionList/details', question.id]"
   >
@@ -20,7 +20,7 @@
     </div>
 
     <!-- Delete button -->
-    <button *ngIf="AuthService.userId===question.appUserId"
+    <button *ngIf="userid===question.appUserId"
       class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2"
       (click)="deleteQuestion(question.id); $event.stopPropagation();"
     >

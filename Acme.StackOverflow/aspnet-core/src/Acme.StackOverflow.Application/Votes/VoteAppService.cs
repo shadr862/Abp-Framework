@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Acme.StackOverflow.Votes;
 using Acme.StackOverflow;
-using AutoMapper.Internal.Mappers;
+using Acme.StackOverflow.Votes;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -15,13 +14,11 @@ public class VoteAppService : CrudAppService<Vote, VoteDto, Guid, ListRequestDto
 
     public override async Task<VoteDto> CreateAsync(CreateUpdateVoteDto input)
     {
-        // Try to find existing vote by the user on the post
         var existingVote = await Repository.FirstOrDefaultAsync(v =>
             v.PostId == input.PostId && v.AppUserId == input.AppUserId);
 
         if (existingVote == null)
         {
-            // No existing vote, create new one
             var vote = new Vote
             {
                 PostId = input.PostId,
@@ -34,7 +31,6 @@ public class VoteAppService : CrudAppService<Vote, VoteDto, Guid, ListRequestDto
         }
         else
         {
-            // Update existing vote type if different
             if (existingVote.VoteType != input.VoteType)
             {
                 existingVote.VoteType = input.VoteType;
@@ -44,4 +40,33 @@ public class VoteAppService : CrudAppService<Vote, VoteDto, Guid, ListRequestDto
             return ObjectMapper.Map<Vote, VoteDto>(existingVote);
         }
     }
+
+    public async Task<VoteCountDto> GetVoteCountByPostIdAsync(Guid postId)
+    {
+        var votes = await Repository.GetQueryableAsync(); // get IQueryable<Vote>
+
+
+        var upvoteCount = await votes.CountAsync(v => v.PostId == postId && v.VoteType == VoteType.Upvote);
+        var downvoteCount = await votes.CountAsync(v => v.PostId == postId && v.VoteType == VoteType.Downvote);
+
+        return new VoteCountDto
+        {
+            UpvoteCount = upvoteCount,
+            DownvoteCount = downvoteCount
+        };
+    }
+    public async Task UnvoteAsync(Guid postId, Guid appUserId)
+    {
+        var vote = await Repository.FirstOrDefaultAsync(v => v.PostId == postId && v.AppUserId == appUserId);
+
+        if (vote != null)
+        {
+            await Repository.DeleteAsync(vote, true); // true => hard delete
+
+        }
+    }
+
 }
+
+
+

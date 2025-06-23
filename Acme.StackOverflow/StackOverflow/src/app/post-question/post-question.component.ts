@@ -1,84 +1,115 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PostType, TagDto } from './post-question.model';
 import { QuestionAndanswerService } from '../services/questionAndanswerService/question-andanswer.service';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/authService/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-post-question',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule,ReactiveFormsModule,FormsModule],
   templateUrl: './post-question.component.html',
   styleUrls: ['./post-question.component.css']
 })
 export class PostQuestionComponent implements OnInit {
-  postForm!: FormGroup;
+   postForm!: FormGroup;
   postTypes = PostType;
   tags: TagDto[] = [];
+  tagSearch: string = ''; // Plain variable, NOT part of form group
+  filteredTags: TagDto[] = [];
+  selectedTagIds: number[] = [];
+  showTagDropdown = false;
 
-  // Group tags by their description (category)
-  groupedTags: { [category: string]: TagDto[] } = {};
-
-  constructor(private fb: FormBuilder, private service: QuestionAndanswerService
-    ,private AuthService:AuthService) {}
+  constructor(
+    private fb: FormBuilder,
+    private service: QuestionAndanswerService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-  // Initialize the form
-  this.postForm = this.fb.group({
-    appUserId: [{ value: '', disabled: true }, Validators.required],
-    postType: [PostType.Question, Validators.required],
-    name:[''],
-    parentId: [''],  
-    acceptedAnswerId: [''],
-    title: [''],
-    body: ['', Validators.required],
-    created:[''],
-    tagIds: [[]]
-  });
+    this.postForm = this.fb.group({
+      appUserId: [{ value: '', disabled: true }, Validators.required],
+      postType: ['', Validators.required],
+      name: [''],
+      parentId: [''],
+      acceptedAnswerId: [''],
+      title: [''],
+      body: ['', Validators.required],
+      created: [''],
+      tagIds: [[]],
+    });
 
-  // Set values from AuthService (adjust property names as per your auth service)
-  const currentUserId = this.AuthService.userId;  // example method to get user id
-  this.postForm.patchValue({
-    appUserId: currentUserId,
-    name:this.AuthService.userName,
-    created: new Date().toISOString()
+    const currentUserId = localStorage.getItem('userId');
+    this.postForm.patchValue({
+      appUserId: currentUserId,
+      postType:PostType.Question,
+      name: localStorage.getItem('userName'),
+      created: new Date().toISOString(),
+    });
 
+    this.service.getTags().subscribe((res: any) => {
+      this.tags = res.items.map((tag: TagDto) => ({
+        ...tag,
+        selected: false,
+      }));
+      this.filteredTags = [...this.tags];
+    });
+  }
 
-  });
+  filterTags() {
+    const filter = this.tagSearch.toLowerCase();
+    this.filteredTags = this.tags.filter(
+      tag =>
+        tag.tagName.toLowerCase().includes(filter) &&
+        !this.selectedTagIds.includes(Number(tag.id))
+    );
+  }
 
-  // Load tags and group as before...
-  this.service.getTags().subscribe((res: any) => {
-    this.tags = res.items.map((tag: TagDto) => ({
-      ...tag,
-      selected: false
-    }));
+  addTag(id: any) {
+   
+    if (!this.selectedTagIds.includes(id)) {
+      this.selectedTagIds = [...this.selectedTagIds, id];
+      this.postForm.patchValue({ tagIds: this.selectedTagIds });
+      this.tagSearch = '';
+      this.filterTags();
+    }
+    
+    this.showTagDropdown = false;
+  }
 
-    this.groupedTags = this.tags.reduce((acc, tag) => {
-      const category = tag.tagDescription ?? 'Others';
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(tag);
-      return acc;
-    }, {} as { [category: string]: TagDto[] });
-  });
-}
+  removeTag(id: any) {
+    this.selectedTagIds = this.selectedTagIds.filter(tagId => tagId !== id);
+    this.postForm.patchValue({ tagIds: this.selectedTagIds });
+    this.filterTags();
+  }
 
+  getTagNameById(id: any): string {
+    const tag = this.tags.find(t => (t.id) === id);
+    return tag ? tag.tagName : '';
+  }
 
-  onTagChange(tag: TagDto): void {
-    tag.selected = !tag.selected;
-    const selectedTagIds = this.tags
-      .filter(t => t.selected)
-      .map(t => t.id);
-    this.postForm.patchValue({ tagIds: selectedTagIds });
+  isTagSelected(id: any): boolean {
+    return this.selectedTagIds.includes(id);
+  }
+
+  onTagInputFocus() {
+    this.showTagDropdown = true;
+    this.filterTags();
+  }
+
+  onTagInputBlur() {
+    setTimeout(() => {
+      this.showTagDropdown = false;
+    }, 150);
   }
 
   onSubmit() {
-   
     if (this.postForm.valid) {
-      this.service.createPost(this.postForm.getRawValue()).subscribe({
-        next: () => alert('Post created successfully!'),
-        error: err => console.error('Error:', err)
+      const rawValue = this.postForm.getRawValue();
+      this.service.createPost(rawValue).subscribe(() => {
+        this.router.navigateByUrl('dashboard');
       });
     }
   }

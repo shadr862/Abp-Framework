@@ -6,5 +6,5 @@ import { DetailQuestionComponent } from "../detail-question/detail-question.comp
 
 export const questionRoute: Routes = [
     {path:'', component: QuestionListComponent},
-    {path:'details/:id',component:DetailQuestionComponent}
+    {path:'details/:id',component:DetailQuestionComponent},
 ]

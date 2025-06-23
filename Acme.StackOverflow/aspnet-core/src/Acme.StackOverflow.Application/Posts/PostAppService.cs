@@ -171,24 +171,104 @@ namespace Acme.StackOverflow.Posts
             return answerDtos;
         }
 
-        public async Task<List<PostDto>> GetAllQuestionsAsync()
+        public async Task<List<PostDto>> GetPostsByUserIdAsync(Guid appUserId)
         {
             var queryable = await Repository.GetQueryableAsync();
 
-            var questions = await queryable
-                .Where(p => p.PostType == PostType.Question) // Assuming enum PostType.Question == 0
+            var userPosts = await queryable
+                .Where(p => p.AppUserId == appUserId)
                 .ToListAsync();
 
-            var questionDtos = new List<PostDto>();
+            var postDtos = new List<PostDto>();
 
-            foreach (var post in questions)
+            foreach (var post in userPosts)
             {
                 var dto = await MapPostWithTagsToDtoAsync(post);
-                questionDtos.Add(dto);
+                postDtos.Add(dto);
             }
 
-            return questionDtos;
+            return postDtos;
         }
+
+
+        public async Task<List<PostDto>> SearchPostsAsync(string keyword)
+        {
+            keyword = keyword?.ToLower() ?? string.Empty;
+
+            var postQueryable = await Repository.GetQueryableAsync();
+            var postTagQueryable = await _postTagRepo.GetQueryableAsync();
+            var tagQueryable = await _tagRepo.GetQueryableAsync();
+
+            // Get matching tag IDs first
+            var matchingTagIds = await tagQueryable
+                .Where(t => EF.Functions.Like(t.TagName.ToLower(), $"%{keyword}%"))
+                .Select(t => t.Id)
+                .ToListAsync();
+
+            // Get post IDs that have those tags
+            var postIdsWithMatchingTags = await postTagQueryable
+                .Where(pt => matchingTagIds.Contains(pt.TagId))
+                .Select(pt => pt.PostId)
+                .Distinct()
+                .ToListAsync();
+
+            // Filter posts by title or by tags
+            var filteredPostsQuery = postQueryable
+                .Where(p => EF.Functions.Like(p.Title.ToLower(), $"%{keyword}%")
+                         || postIdsWithMatchingTags.Contains(p.Id));
+
+            // Project posts to PostDto WITHOUT tags first
+            var posts = await filteredPostsQuery
+                .Select(p => new PostDto
+                {
+                    Id = p.Id,
+                    AppUserId = p.AppUserId,
+                    PostType = p.PostType,
+                    Name = p.Name,
+                    ParentId = p.ParentId,
+                    AcceptedAnswerId = p.AcceptedAnswerId,
+                    Title = p.Title,
+                    Body = p.Body,
+                    Created = p.Created,
+                    Tags = new List<TagDto>() // will fill after
+                })
+                .ToListAsync();
+
+            // Load tags for all filtered posts at once
+            var postIds = posts.Select(p => p.Id).ToList();
+
+            var postTags = await postTagQueryable
+                .Where(pt => postIds.Contains(pt.PostId))
+                .ToListAsync();
+
+            var tagIds = postTags.Select(pt => pt.TagId).Distinct().ToList();
+
+            var tags = await tagQueryable
+                .Where(t => tagIds.Contains(t.Id))
+                .Select(t => new TagDto { Id = t.Id, TagName = t.TagName })
+                .ToListAsync();
+
+            // Map tags to posts
+            foreach (var postDto in posts)
+            {
+                var tagIdsForPost = postTags
+                    .Where(pt => pt.PostId == postDto.Id)
+                    .Select(pt => pt.TagId)
+                    .ToList();
+
+                postDto.Tags = tags
+                    .Where(t => tagIdsForPost.Contains(t.Id))
+                    .ToList();
+            }
+
+            return posts;
+        }
+
+
+
+
+
+
 
 
 

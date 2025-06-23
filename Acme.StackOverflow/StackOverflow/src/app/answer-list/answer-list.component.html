@@ -1,0 +1,23 @@
+<div class="container mt-4">
+  <h4 class="mb-4">Answers</h4>
+
+  <div *ngIf="(answers?.length || 0) > 0; else noAnswers">
+    <div *ngFor="let answer of answers" class="mb-4 p-3 border rounded shadow-sm">
+      <!-- Answer Author -->
+      <div class="fw-bold">{{ answer.name || 'Anonymous' }}</div>
+
+      <!-- Created Date -->
+      <div class="text-muted small mb-2">
+        {{ answer.created | date: 'medium' }}
+      </div>
+
+      <!-- Answer Text -->
+      <p class="mb-0" style="white-space: pre-line;">{{ answer.answerText }}</p>
+    </div>
+  </div>
+
+  <ng-template #noAnswers>
+    <p class="text-muted">No answers available.</p>
+  </ng-template>
+</div>
+

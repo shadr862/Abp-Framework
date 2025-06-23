@@ -10,7 +10,7 @@ namespace Acme.StackOverflow
     public class ListRequestDto:PagedResultRequestDto
     {
         public ListRequestDto() {
-            MaxMaxResultCount = 1000;
+            MaxResultCount = 1000;
         }
     }
 }

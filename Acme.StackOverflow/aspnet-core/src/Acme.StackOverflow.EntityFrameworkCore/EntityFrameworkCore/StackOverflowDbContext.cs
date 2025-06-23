@@ -19,6 +19,7 @@ using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
+using Acme.StackOverflow.Answers;
 
 namespace Acme.StackOverflow.EntityFrameworkCore;
 
@@ -53,6 +54,7 @@ public class StackOverflowDbContext :
     public DbSet<Vote> Votes { get; set; }
     public DbSet<Tag> Tags { get; set; }
     public DbSet<PostTag> PostTags { get; set; }
+    public DbSet<Answer> Answers { get; set; }
 
 
     public DbSet<IdentityUser> Users { get; set; }
@@ -125,11 +127,6 @@ public class StackOverflowDbContext :
              .WithMany(p => p.ChildPosts)
              .HasForeignKey(p => p.ParentId);
 
-            b.HasOne(p => p.AcceptedAnswer)
-             .WithMany(p => p.AcceptedByQuestions)
-             .HasForeignKey(p => p.AcceptedAnswerId)
-             .OnDelete(DeleteBehavior.NoAction);
-
             b.HasOne(p => p.AppUser)
              .WithMany(u => u.Posts)
              .HasForeignKey(p => p.AppUserId);
@@ -155,7 +152,12 @@ public class StackOverflowDbContext :
             .HasForeignKey(v => v.PostId)
             .OnDelete(DeleteBehavior.Restrict); // ❗Fix cascade path error
 
-        
+        builder.Entity<Answer>()
+            .HasOne(a=>a.Post)
+            .WithMany(p=>p.Answers)
+            .HasForeignKey(a=>a.PostId)
+            .OnDelete(DeleteBehavior.Restrict);
+
     }
 
 }

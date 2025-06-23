@@ -19,8 +19,11 @@ namespace Acme.StackOverflow.Comments
         public Guid AppUserId { get; set; }
         public AppUser AppUser{ get; set; }
 
+        public string Name { get; set; }
         public string CommentText { get; set; }
-        public int Score { get; set; }
+        public DateTime Created { get; set; }
+
+        
     }
 
 

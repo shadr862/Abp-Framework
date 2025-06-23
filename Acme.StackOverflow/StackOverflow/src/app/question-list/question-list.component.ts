@@ -12,11 +12,13 @@ import { AuthService } from '../services/authService/auth.service';
 })
 export class QuestionListComponent implements OnInit{
    questions: any = [];
+   userid='';
 
    constructor(private Service:QuestionAndanswerService,
     public AuthService:AuthService){}
 
    ngOnInit(): void {
+    this.userid=localStorage.getItem('userId')!;
      this.Service.onRefresh().subscribe(()=>{
        this.loadQuestions();
      })
