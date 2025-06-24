@@ -1,30 +1,35 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PostType, TagDto } from './post-question.model';
-import { QuestionAndanswerService } from '../services/questionAndanswerService/question-andanswer.service';
+import { J, R } from '@angular/cdk/keycodes';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../services/authService/auth.service';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { PostType, TagDto } from '../post-question/post-question.model';
+import { QuestionAndanswerService } from '../services/questionAndanswerService/question-andanswer.service';
+import { ActivatedRoute, Router } from '@angular/router';
+
 
 @Component({
-  selector: 'app-post-question',
+  selector: 'app-edit-post',
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
-  templateUrl: './post-question.component.html',
-  styleUrls: ['./post-question.component.css']
+  templateUrl: './edit-post.component.html',
+  styleUrl: './edit-post.component.css'
 })
-export class PostQuestionComponent implements OnInit {
+export class EditPostComponent {
   postForm!: FormGroup;
   postTypes = PostType;
   tags: TagDto[] = [];
   tagSearch: string = ''; // Plain variable, NOT part of form group
   filteredTags: TagDto[] = [];
   selectedTagIds: any[] = [];
+  selectedTags: string[] = []
   showTagDropdown = false;
+  postId!: string;
+  question: any;
 
   constructor(
     private fb: FormBuilder,
     private service: QuestionAndanswerService,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -40,26 +45,49 @@ export class PostQuestionComponent implements OnInit {
       tagIds: [[]],
     });
 
-    const currentUserId = localStorage.getItem('userId');
+    this.postId = this.activatedRoute.snapshot.paramMap.get('id')!;
 
-    const now = new Date();
-    const bangladeshOffsetMs = 6 * 60 * 60 * 1000; // 6 hours in ms
-    const bangladeshTime = new Date(now.getTime() + bangladeshOffsetMs);
-
-    this.postForm.patchValue({
-      appUserId: currentUserId,
-      postType: PostType.Question,
-      name: localStorage.getItem('userName'),
-      created: bangladeshTime.toISOString(),
-    });
-
+    // ✅ Step 1: Load tags
     this.service.getTags().subscribe((res: any) => {
       this.tags = res.items.map((tag: TagDto) => ({
         ...tag,
         selected: false,
       }));
       this.filteredTags = [...this.tags];
+
+      // ✅ Step 2: After tags are loaded, load question
+      this.service.getQuestionById(this.postId).subscribe((data: any) => {
+        this.question = data;
+        this.loaddata(); // ✅ Tags are guaranteed to be ready
+      });
     });
+  }
+
+  loaddata() {
+    this.selectedTags = Array.isArray(this.question.tags) ? this.question.tags.map((tag: any) => tag.tagName) : [];
+
+    
+    this.selectedTagIds = this.tags
+      .filter(tag => this.selectedTags.includes(tag.tagName))
+      .map(tag => tag.id);
+
+    
+
+
+    this.postForm.patchValue({
+      appUserId: localStorage.getItem('userId'),
+      postType: this.question.postType,
+      name: this.question.name,
+      parentId: this.question.parentId,
+      acceptedAnswerId: this.question.acceptedAnswerId,
+      title: this.question.title,
+      body: this.question.body,
+      created: new Date().toISOString(),
+      tagIds: this.selectedTagIds,
+    });
+
+
+
   }
 
   filterTags() {
@@ -94,7 +122,7 @@ export class PostQuestionComponent implements OnInit {
     return tag ? tag.tagName : '';
   }
 
-  
+
   onTagInputFocus() {
     this.showTagDropdown = true;
     this.filterTags();
@@ -109,9 +137,10 @@ export class PostQuestionComponent implements OnInit {
   onSubmit() {
     if (this.postForm.valid) {
       const rawValue = this.postForm.getRawValue();
-      this.service.createPost(rawValue).subscribe(() => {
+      this.service.editQuestion(rawValue, this.postId).subscribe(() => {
         this.router.navigateByUrl('dashboard');
       });
     }
   }
+
 }

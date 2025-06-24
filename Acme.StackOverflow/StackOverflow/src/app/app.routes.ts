@@ -7,6 +7,7 @@ import { PostAnswerComponent } from './post-answer/post-answer.component';
 import { AnswerListComponent } from './answer-list/answer-list.component';
 import { MyProfileComponent } from './my-profile/my-profile.component';
 import { SearchQuestionComponent } from './search-question/search-question.component';
+import { EditAnswerComponent } from './edit-answer/edit-answer.component';
 
 
 
@@ -19,6 +20,7 @@ export const routes: Routes = [
        {path:'questionList', loadChildren: () => import('./question-list/questions.route').then(m => m.questionRoute)},
        {path:'my-profile',component:MyProfileComponent},
        {path:'search',component:SearchQuestionComponent},
+       {path: 'edit-answer/:postId/:answerId', component: EditAnswerComponent },
        {path:'create-answer/:id',component:PostAnswerComponent},
        {path:'answerList/:id',component:AnswerListComponent},
        {path:'',redirectTo:'questionList',pathMatch:'full'},

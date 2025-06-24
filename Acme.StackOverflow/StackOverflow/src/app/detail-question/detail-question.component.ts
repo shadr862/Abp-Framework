@@ -11,7 +11,7 @@ import { CommentService } from '../services/commentService/comment.service';
 
 @Component({
   selector: 'app-detail-question',
-  imports: [CommonModule, FormsModule,RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './detail-question.component.html',
   styleUrl: './detail-question.component.css'
 })
@@ -37,7 +37,7 @@ export class DetailQuestionComponent implements OnInit {
   ngOnInit(): void {
 
     this.isLoggdin = localStorage.getItem('isLisLoggedIn') === 'true';
-    this.userId=localStorage.getItem('userId')??'';
+    this.userId = localStorage.getItem('userId') ?? '';
     this.questionId = this.router.snapshot.paramMap.get('id') ?? '';
     this.Service.getQuestionById(this.questionId).subscribe((data) => {
       this.question = data;
@@ -92,37 +92,40 @@ export class DetailQuestionComponent implements OnInit {
     });
   }
 
-  unvote(){
-    const unvote={
+  unvote() {
+    const unvote = {
       postId: this.questionId,
       appUserId: localStorage.getItem('userId')!
     }
 
-    this.VoteService.unVote(unvote.postId,unvote.appUserId).subscribe(() => {
+    this.VoteService.unVote(unvote.postId, unvote.appUserId).subscribe(() => {
       this.VoteService.RefreshNeeded();
     });
   }
 
 
   addComment() {
+    const now = new Date();
+    const bangladeshOffsetMs = 6 * 60 * 60 * 1000; // 6 hours in ms
+    const bangladeshTime = new Date(now.getTime() + bangladeshOffsetMs);
+
     const cmt: comment = {
       postId: this.questionId,
       appUserId: localStorage.getItem('userId') ?? '',
       name: localStorage.getItem('userName') ?? '',
       commentText: this.newCommentText,
-      created: new Date().toISOString()
+      created: bangladeshTime.toISOString() // Convert to ISO string
     };
 
     this.CommentService.postComment(cmt).subscribe(() => {
       this.CommentService.RefreshNeeded();
-      this.newCommentText='';
+      this.newCommentText = '';
     })
 
   }
-  
-  deleteComment(id:any)
-  {
-    this.CommentService.deleteComment(id).subscribe(()=>{
+
+  deleteComment(id: any) {
+    this.CommentService.deleteComment(id).subscribe(() => {
       this.CommentService.RefreshNeeded();
     })
   }

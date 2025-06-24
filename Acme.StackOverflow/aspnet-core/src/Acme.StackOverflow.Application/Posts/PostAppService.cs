@@ -82,6 +82,18 @@ namespace Acme.StackOverflow.Posts
             return await GetAsync(id); // ✅ Reuse GetAsync
         }
 
+        
+        public async Task<PostDto> SetAcceptedAnswerAsync(Guid postId, Guid? acceptedAnswerId)
+        {
+            var post = await Repository.GetAsync(postId);
+            post.AcceptedAnswerId = acceptedAnswerId; // can be null to unaccept
+
+            await Repository.UpdateAsync(post);
+            await CurrentUnitOfWork.SaveChangesAsync();
+
+            return await GetAsync(postId);
+        }
+
 
 
         public override async Task<PostDto> GetAsync(Guid id)

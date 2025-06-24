@@ -3,19 +3,19 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuestionAndanswerService } from '../services/questionAndanswerService/question-andanswer.service';
-import { AuthService } from '../services/authService/auth.service';
 
 @Component({
-  selector: 'app-post-answer',
+  selector: 'app-edit-answer',
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './post-answer.component.html',
-  styleUrl: './post-answer.component.css'
+  templateUrl: './edit-answer.component.html',
+  styleUrl: './edit-answer.component.css'
 })
-export class PostAnswerComponent {
+export class EditAnswerComponent {
   answerForm!: FormGroup;
   postId!: string;
-  appUserId: string = 'your-user-id'; // Get from AuthService
-  userName: string = 'Your Name';     // Get from AuthService
+  answerId!: string;
+  appUserId!: string;
+  userName!: string;
 
   constructor(
     private fb: FormBuilder,
@@ -24,8 +24,10 @@ export class PostAnswerComponent {
     private router: Router) { }
 
   ngOnInit(): void {
-    this.postId = this.route.snapshot.paramMap.get('id')!;
+    this.postId = this.route.snapshot.paramMap.get('postId')!;
+    this.answerId = this.route.snapshot.paramMap.get('answerId')!;
     this.appUserId = localStorage.getItem('userId')!;
+    this.userName = localStorage.getItem('userName')!;
 
     this.answerForm = this.fb.group({
       answerText: ['', Validators.required]
@@ -42,14 +44,14 @@ export class PostAnswerComponent {
     const answerDto = {
       postId: this.postId,
       appUserId: this.appUserId,
-      name: localStorage.getItem('userName'),
+      name: this.userName,
       answerText: this.answerForm.value.answerText,
-      created: bangladeshTime.toISOString()
+      created: bangladeshTime.toISOString(),
     };
 
-    this.qaService.postAnswer(answerDto).subscribe(() => {
+    this.qaService.editAnswer(answerDto, this.answerId).subscribe(() => {
       this.answerForm.reset();
-      this.router.navigateByUrl(`/dashboard/questionList/details/${this.postId}`);
+      this.router.navigateByUrl(`/dashboard/answerList/${this.postId}`);
     });
   }
 
