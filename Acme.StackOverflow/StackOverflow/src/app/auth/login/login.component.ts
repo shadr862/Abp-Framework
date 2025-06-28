@@ -34,7 +34,7 @@ export class LoginComponent {
       //alert(JSON.stringify(this.loginObj))
       if (response != null && response.email === this.loginObj.EmailId && response.passwordHash === this.loginObj.Password) {
 
-        this.AuthService.isLisLoggedIn = true;
+        this.AuthService.isLoggedIn = true;
         this.AuthService.userId = response.id;
         this.AuthService.userName = response.displayName;
         this.AuthService.bio=response.bio;

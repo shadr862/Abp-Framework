@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class AuthService {
-  isLisLoggedIn: boolean = false;
+  isLoggedIn: boolean = false;
   userId:string='';
   userName:string='';
   bio:string='';
@@ -28,12 +28,12 @@ export class AuthService {
 
   clear()
   {
-    this.isLisLoggedIn=false;
+    this.isLoggedIn = false;
     this.userId='';
     this.userName='';
     this.bio='';
 
-    localStorage.removeItem('isLisLoggedIn');
+    localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
     localStorage.removeItem('bio');

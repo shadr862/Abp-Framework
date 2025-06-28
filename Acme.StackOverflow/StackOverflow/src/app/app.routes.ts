@@ -8,6 +8,7 @@ import { AnswerListComponent } from './answer-list/answer-list.component';
 import { MyProfileComponent } from './my-profile/my-profile.component';
 import { SearchQuestionComponent } from './search-question/search-question.component';
 import { EditAnswerComponent } from './edit-answer/edit-answer.component';
+import { canAcivateGuard } from './guards/can-acivate.guard';
 
 
 
@@ -16,12 +17,12 @@ export const routes: Routes = [
     path: 'dashboard',
     component: TopNavComponent,
     children: [
-       {path:'create-question',component:PostQuestionComponent},
+       {path:'create-question',component:PostQuestionComponent,canActivate:[canAcivateGuard]},
        {path:'questionList', loadChildren: () => import('./question-list/questions.route').then(m => m.questionRoute)},
-       {path:'my-profile',component:MyProfileComponent},
+       {path:'my-profile',component:MyProfileComponent,canActivate:[canAcivateGuard]},
        {path:'search',component:SearchQuestionComponent},
-       {path: 'edit-answer/:postId/:answerId', component: EditAnswerComponent },
-       {path:'create-answer/:id',component:PostAnswerComponent},
+       {path: 'edit-answer/:postId/:answerId', component: EditAnswerComponent ,canActivate:[canAcivateGuard]},
+       {path:'create-answer/:id',component:PostAnswerComponent,canActivate:[canAcivateGuard]},
        {path:'answerList/:id',component:AnswerListComponent},
        {path:'',redirectTo:'questionList',pathMatch:'full'},
     ]
