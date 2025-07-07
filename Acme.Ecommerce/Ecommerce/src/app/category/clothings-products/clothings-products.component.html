@@ -1,0 +1,50 @@
+<div class="row px-3">
+  <ng-container *ngIf="productList">
+    <div class="col-sm-4 mb-4 px-2" *ngFor="let product of productList ">
+
+      <!-- Entire card is now clickable -->
+      <div class="card h-100 p-2 shadow-sm"
+           [routerLink]="[ '/dashboard/products', product.id ]"
+           style="cursor: pointer;">
+
+        <img [src]="product.thumbnail" class="card-img-top fixed-image-size" [alt]="product.title">
+
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ product.title }}</h5>
+          <p class="card-text">{{ product.description|fixedDecriptionLen:10 }}</p>
+
+          <!-- Quantity Control -->
+          <div class="d-flex align-items-center justify-content-start gap-2 mb-2"
+               (click)="$event.stopPropagation()">
+            <button class="btn btn-outline-secondary btn-sm"
+                    (click)="decreaseQuantity(product); $event.stopPropagation()"
+                    [disabled]="product.quantity <= 1">−</button>
+
+            <span class="px-2">{{ product.quantity }}</span>
+
+            <button class="btn btn-outline-secondary btn-sm"
+                    (click)="increaseQuantity(product); $event.stopPropagation()"
+                    [disabled]="product.quantity >= product.stock">+</button>
+
+            <small class="text-muted ms-auto">Stock: {{ product.stock }}</small>
+          </div>
+
+          <!-- Button Group -->
+          <div class="mt-auto d-flex flex-wrap gap-2 pt-2" (click)="$event.stopPropagation()">
+            <a class="btn btn-primary">${{ product.price }}</a>
+            <button class="btn btn-success" (click)="addToCart(product); $event.stopPropagation()">Add to Cart</button>
+            <a class="btn btn-warning" (click)="showCart(); $event.stopPropagation()">Go to Cart</a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </ng-container>
+</div>
+
+
+
+<app-product-cart #cartRef></app-product-cart>
+
+

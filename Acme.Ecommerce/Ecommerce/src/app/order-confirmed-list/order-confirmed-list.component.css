@@ -1,0 +1,8 @@
+.btn-delivered {
+  background: linear-gradient(90deg, #28a745, #218838);
+  color: white;
+  border: none;
+}
+.btn-delivered:hover {
+  background: #1e7e34;
+}

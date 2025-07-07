@@ -1,0 +1,69 @@
+<div class="sidenav-container" [class.sidebar-collapsed]="isCollapsed">
+
+  <div class="sidenav-wrapper d-flex">
+
+    <!-- Side Navigation (sidebar slides) -->
+    <nav class="sidenav" [class.collapsed]="isCollapsed">
+      <div class="toolbar">
+        <span class="menu-label">Menu</span>
+      </div>
+      <div class="category-toggle" (click)="toggleAllDashboard()">
+        <i class="fas fa-tachometer-alt" style="margin-right: 8px;"></i>
+        Dashboard ▾
+      </div>
+      <div *ngIf="showDashboard" class="category-list">
+        <a *ngIf="authService.isLoggedIn" routerLink="/dashboard/profile">User profile</a>
+        <a *ngIf="authService.isAdmin" routerLink="/dashboard/user-list">User List</a>
+        <a *ngIf="authService.isAdmin" routerLink="/dashboard/orderedList">Order Confirmed List</a>
+      </div>
+
+
+      <a routerLink="/dashboard">
+        <i class="fas fa-box-open" style="margin-right: 8px;"></i>
+        Products
+      </a>
+      <!-- Category Toggle Button -->
+      <div class="category-toggle" (click)="toggleAllCategories()">
+        <i class="fas fa-list" style="margin-right: 8px;"></i>
+        Categories ▾
+      </div>
+
+      <!-- Category Links (List shown when expanded) -->
+      <div *ngIf="showAllCategories" class="category-list">
+        <a *ngFor="let category of categories" [routerLink]="category.link">
+          {{ category.name }}
+        </a>
+      </div>
+
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <header class="header">
+        <div class="title d-flex align-items-center">
+          <button class="menu-toggle-btn" (click)="toggleMenu()">☰</button>
+          <span>Ecommerce</span>
+        </div>
+
+        <div class="search-bar">
+          <input type="text" placeholder="Search products..." [formControl]="searchfilter" />
+        </div>
+
+        <div class="auth">
+          <span *ngIf="authService.isLoggedIn">Welcome,</span>
+          <a [routerLink]="'/dashboard/profile'" style="text-decoration: none;">
+            <span *ngIf="authService.isLoggedIn">{{ authService.firstName }}</span>
+          </a>
+          <button *ngIf="!authService.isLoggedIn" [routerLink]="'/login'">Login</button>
+          <button *ngIf="authService.isLoggedIn" (click)="logout()">Logout</button>
+        </div>
+      </header>
+
+      <main class="content">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+
+  </div>
+
+</div>

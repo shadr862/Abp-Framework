@@ -1,0 +1,73 @@
+<!-- 🔍 Search Input -->
+<div class="row mb-4">
+  <div class="col-12 col-md-6 mx-auto">
+    <div class="input-group shadow-sm" style="margin-top: 1rem;">
+      <span class="input-group-text bg-white border-primary text-primary">
+        🔍
+      </span>
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        class="form-control border-primary"
+        placeholder="Search by Name or Phone Number..."
+        aria-label="Search by Name or Phone Number"
+      >
+    </div>
+  </div>
+</div>
+
+
+
+<div class="container-fluid">
+  <div class="row g-4">
+    <div class="col-12 col-sm-6 col-md-4" *ngFor="let item of orderedList?.items | filterOrders:searchText">
+      <div class="card shadow border-0 h-100 position-relative">
+
+        <!-- 📦 Order Info Header -->
+        <div class="d-flex justify-content-between align-items-center bg-light border-bottom px-3 py-2 rounded-top">
+          <span class="text-primary fw-semibold small">Order Information</span>
+          
+          <div class="d-flex align-items-center gap-2">
+            <!-- ✅ Green tick if status is 'paid' -->
+            <ng-container *ngIf="item.status.toLowerCase() === 'paid'">
+              <i class="bi bi-check-circle-fill text-success" 
+                 style="font-size: 1.5rem; filter: drop-shadow(0 0 3px rgba(40,167,69,0.7));" 
+                 title="Paid"></i>
+            </ng-container>
+
+            <!-- 🗑️ Delete button -->
+            <button class="btn btn-outline-danger btn-sm p-1" (click)="deleteOrder(item.id)" title="Delete Order">
+              <i class="bi bi-trash" style="font-size: 1.2rem;"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 🧾 Card Body -->
+        <div class="card-body">
+          <h6 class="text-success fw-semibold mb-2">User Info</h6>
+          <p class="mb-1"><strong>Name:</strong> {{ item.name }}</p>
+          <p class="mb-1"><strong>Phone:</strong> {{ item.phoneNumber }}</p>
+          <p class="mb-1"><strong>Status:</strong> {{ item.status }}</p>
+          <p class="mb-3"><strong>Delivery Method:</strong> {{ item.deliveryMethod }}</p>
+
+          <h6 class="text-info fw-semibold">Shipping Address</h6>
+          <ul class="list-group list-group-flush mb-3 small">
+            <li class="list-group-item"><strong>Country:</strong> {{ item.address.country }}</li>
+            <li class="list-group-item"><strong>Division:</strong> {{ item.address.division }}</li>
+            <li class="list-group-item"><strong>City:</strong> {{ item.address.city }}</li>
+            <li class="list-group-item"><strong>Street:</strong> {{ item.address.street }}</li>
+          </ul>
+
+          <!-- 🛒 Actions -->
+          <button class="btn btn-sm btn-primary w-100 mb-2" (click)="viewProductList(item.orderedProducts)">
+            <i class="bi bi-bag me-1"></i> View Products
+          </button>
+          <button class="btn btn-sm w-100 text-white" (click)="Delivered(item)"
+                  style="background: linear-gradient(90deg, #28a745, #218838);">
+            <i class="bi bi-check2-circle me-1"></i> Mark as Delivered
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

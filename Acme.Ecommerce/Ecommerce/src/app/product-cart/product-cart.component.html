@@ -1,0 +1,23 @@
+<div #cartDiv id="cart" class="small-cart">
+  <!-- Close Button -->
+  <button type="button" class="btn-close m-2" aria-label="Close" (click)="toggleCart()"></button>
+
+  <!-- Scrollable Cart Content -->
+  <div class="cart-content">
+    <div class="cart-item" *ngFor="let product of cart">
+      <img [src]="product.thumbnail" alt="{{ product.title }}" class="cart-img" />
+      <div class="cart-details">
+        <h6 class="mb-1">{{ product.title }}</h6>
+        <small class="small-text">Qty: {{ product.quantity }}</small><br />
+        <small class="small-text">Price: {{ product.price | currency }}</small>
+      </div>
+      <button class="remove-btn" aria-label="Remove item" (click)="removeFromCart(product.id)">&times;</button>
+    </div>
+  </div>
+
+  <!-- Total Price Footer -->
+  <div class="cart-footer">
+    <div class="total-label">Total: {{ getTotalPrice() | currency }}</div>
+    <button class="btn btn-primary" (click)="AuthService.isLoggedIn ? checkout() : route.navigate(['/login'])"  >Order</button>
+  </div>
+</div>

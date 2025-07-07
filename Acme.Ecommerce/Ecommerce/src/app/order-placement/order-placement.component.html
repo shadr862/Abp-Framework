@@ -1,0 +1,118 @@
+<form [formGroup]="userOrderForm" (ngSubmit)="onSubmit()" class="container p-4 bg-light rounded shadow">
+
+  <!-- Caption (centered) -->
+  <h2 class="text-white bg-primary px-2 py-1 text-center rounded shadow fs-5 w-50 mx-auto">
+    Confirm Order
+  </h2>
+
+  <!-- Basic Info -->
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label for="name" class="form-label">Receiver Name</label>
+      <input id="name" class="form-control" formControlName="name" />
+      <div *ngIf="userOrderForm.get('name')?.invalid && userOrderForm.get('name')?.touched" class="text-danger small">
+        Name is required.
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <label for="phoneNumber" class="form-label">Phone Number</label>
+      <input id="phoneNumber" class="form-control" formControlName="phoneNumber" />
+      <div *ngIf="userOrderForm.get('phoneNumber')?.invalid && userOrderForm.get('phoneNumber')?.touched"
+        class="text-danger small">
+        Phone number is required.
+      </div>
+    </div>
+    <div class="col-md-12">
+      <label for="phoneNumber" class="form-label">Delivery Method</label>
+      <input id="phoneNumber" class="form-control" formControlName="deliveryMethod" />
+      <div *ngIf="userOrderForm.get('deliveryMethod')?.invalid && userOrderForm.get('deliveryMethod')?.touched"
+        class="text-danger small">
+        Phone number is required.
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <!-- Address Section -->
+  <div formGroupName="address">
+    <h4 class="mb-3">Receiver Address</h4>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label for="country" class="form-label">Country</label>
+        <input id="country" class="form-control" formControlName="country" />
+      </div>
+
+      <div class="col-md-6">
+        <label for="division" class="form-label">Division</label>
+        <input id="division" class="form-control" formControlName="division" />
+      </div>
+
+      <div class="col-md-6">
+        <label for="city" class="form-label">City</label>
+        <input id="city" class="form-control" formControlName="city" />
+      </div>
+
+      <div class="col-md-6">
+        <label for="street" class="form-label">Street</label>
+        <input id="street" class="form-control" formControlName="street" />
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <!-- Ordered Products -->
+  <div formArrayName="orderedProducts">
+    <h4 class="mb-3">Ordered Products</h4>
+
+    <div *ngFor="let product of orderedProducts.controls; let i = index" [formGroupName]="i"
+      class="card mb-3 shadow-sm">
+      <div class="row g-0 align-items-center">
+
+        <!-- Thumbnail -->
+        <div class="col-md-2 text-center">
+          <img [src]="product.get('thumbnail')?.value" class="img-fluid rounded-start p-2" alt="Product Thumbnail"
+            style="max-height: 100px; object-fit: contain;">
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-md-9">
+          <div class="card-body">
+            <h5 class="card-title mb-1">{{ product.get('title')?.value }}</h5>
+            <p class="card-text mb-1 text-muted">
+              Category: {{ product.get('category')?.value }}<br>
+              Price: <strong>${{ product.get('price')?.value }}</strong><br>
+              Quantity: <small class="text-body-secondary">{{ product.get('quantity')?.value }}</small>
+            </p>
+          </div>
+        </div>
+
+        <!-- Remove Button -->
+        <div class="col-md-1 d-flex justify-content-center align-items-center">
+          <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeOrderedProduct(i)" title="Remove">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Total Payment -->
+  <div class="row mt-4">
+    <div class="col text-end">
+      <div class="bg-success text-white rounded p-3 shadow-sm d-inline-block">
+        <h5 class="mb-0">Total Payment: ${{ totalPayment.toFixed(2) }}</h5>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Submit Button (centered) -->
+  <div class="mt-4 d-flex justify-content-center">
+    <button [disabled]="userOrderForm.invalid" type="submit" class="btn btn-primary px-5">Submit Order</button>
+  </div>
+
+</form>

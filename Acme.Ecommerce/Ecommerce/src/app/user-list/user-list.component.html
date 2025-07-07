@@ -1,0 +1,62 @@
+<div class="container my-4">
+  <div class="card shadow-sm rounded-4">
+    <div class="card-header bg-primary text-white position-relative">
+      <h4 class="mb-0 fw-semibold text-center" style="font-size: 1.75rem;">
+        User List
+      </h4>
+      <span class="badge bg-light text-dark position-absolute top-0 end-0 m-2">
+        {{ users.totalCount }} Users
+      </span>
+    </div>
+    <!-- Search Input -->
+    <div class="row mb-4">
+  <div class="col-12 col-md-6 mx-auto">
+    <div class="input-group shadow-sm" style="margin-top: 1rem;">
+      <span class="input-group-text bg-primary text-white border-primary">
+        <i class="bi bi-search"></i>
+      </span>
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        class="form-control border-primary"
+        placeholder="Search by First Name, Last Name, or Email"
+        aria-label="Search users"
+      >
+    </div>
+  </div>
+</div>
+
+
+
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">User ID</th>
+              <th scope="col" class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users.items| userfilter:searchText; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ user.firstName }}</td>
+              <td>{{ user.lastName }}</td>
+              <td>{{ user.email }}</td>
+              <td class="text-muted small">{{ user.id }}</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-danger" (click)="deleteUser(user.id)">
+                  <i class="bi bi-trash-fill me-1"></i> Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

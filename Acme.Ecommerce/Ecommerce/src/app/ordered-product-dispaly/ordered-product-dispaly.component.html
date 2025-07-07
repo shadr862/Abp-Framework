@@ -1,0 +1,42 @@
+<h4 class="mb-4 text-dark fw-semibold d-flex align-items-center border-bottom pb-2">
+  <i class="bi bi-box-seam me-2 text-primary"></i> Ordered Products
+</h4>
+
+
+<div class="row g-4" style="margin: auto;">
+  <div class="col-md-6 col-lg-4" *ngFor="let product of products">
+    <div class="card h-100 border-0 shadow-sm">
+      <div class="row g-0 align-items-center">
+        <div class="col-4">
+          <img [src]="product.thumbnail" class="img-fluid rounded-start" alt="Product Image">
+        </div>
+        <div class="col-8">
+          <div class="card-body py-2 px-3">
+            <h6 class="card-title fw-semibold text-dark mb-2">{{ product.title }}</h6>
+            <p class="card-text text-muted mb-1">
+              <strong>Category:</strong> {{ product.category }}
+            </p>
+            <p class="card-text text-muted mb-1">
+              <strong>Price:</strong> ${{ product.price }}
+            </p>
+            <p class="card-text text-muted mb-0">
+              <strong>Quantity:</strong> {{ product.quantity }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ✅ Total Payment Display -->
+<div class="row mt-4">
+  <div class="col text-end">
+    <div class="bg-success text-white rounded p-3 shadow-sm d-inline-block">
+      <h5 class="mb-0">Total Payment: ${{ totalPayment.toFixed(2) }}</h5>
+    </div>
+  </div>
+</div>
+

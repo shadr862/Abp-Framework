@@ -1,0 +1,16 @@
+/* Optional subtle color tweak */
+.form-label {
+  color: #495057; /* dark gray */
+}
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  font-weight: 600;
+}
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+}
